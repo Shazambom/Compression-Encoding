@@ -23,7 +23,15 @@ public class Huffman {
      */
     public static void main(String[] args) {
 
-        decode(encode(new File("audio.mp3")));
+        //decode(encode(new File("TestFiles/large.xml")));
+        int times = 3;
+        File encoded = encode(new File("TestFiles/small.txt"));
+        for (int i = 0; i < times - 1; i++) {
+            encoded = encode(encoded);
+        }
+        for (int i = 0; i < times; i++) {
+            encoded = decode(encoded);
+        }
     }
 
 
@@ -127,10 +135,12 @@ public class Huffman {
             out.write(bytes);
             out.flush();
             out.close();
+
             System.out.println("Completed");
 
+
         } catch (Exception e) {
-            System.out.println("Fuck 2.0");
+            System.out.println("Fuck");
             e.printStackTrace();
         }
         System.out.println("Encoding Complete");
@@ -176,10 +186,12 @@ public class Huffman {
             }
             System.out.println("Completed");
             int bitLoc = (8 * 8) + (size * 8);
+
+
             String tempString = "";
             System.out.print("Decoding Bytes... ");
             ArrayList<Byte> decodedBytes = new ArrayList<Byte>();
-            for (int i = bitLoc; i < streamSize + bitLoc; i++) {
+            for (int i = bitLoc; i < bitString.length(); i++) {
                 if (reverseHuffmanMap.containsKey(tempString)) {
                     decodedBytes.add(reverseHuffmanMap.get(tempString));
                     tempString = "";
@@ -201,7 +213,7 @@ public class Huffman {
             System.out.println("Completed");
 
         } catch (Exception e) {
-            System.out.println("Fuck 3.0");
+            System.out.println("Fuck");
             e.printStackTrace();
         }
         System.out.println("Decoding Complete");
@@ -319,6 +331,35 @@ public class Huffman {
         }
     }
 
+    /**
+     * Converts a byte array to an int
+     * @param b the byte array
+     * @return the int derived from the byte array
+     */
+    private static int byteArrayToInt(byte[] b)
+    {
+        int value = 0;
+        for (int i = 0; i < 4; i++) {
+            int shift = (4 - 1 - i) * 8;
+            value += (b[i] & 0x000000FF) << shift;
+        }
+        return value;
+    }
+
+    /**
+     * Converts an int to a byte array
+     * @param a the int
+     * @return the byte array representing the int
+     */
+    private static byte[] intToByteArray(int a)
+    {
+        byte[] ret = new byte[4];
+        ret[3] = (byte) (a & 0xFF);
+        ret[2] = (byte) ((a >> 8) & 0xFF);
+        ret[1] = (byte) ((a >> 16) & 0xFF);
+        ret[0] = (byte) ((a >> 24) & 0xFF);
+        return ret;
+    }
 
     private static class Node implements
             Comparable<Node>{
