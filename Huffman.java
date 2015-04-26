@@ -55,7 +55,7 @@ public class Huffman {
         try {
             nonEncodedBytes = Files.readAllBytes(toEncode.toPath());
             //----------------------------Use this ^ to rework it --------------------------
-            System.out.print("Creating the huffman weight table... ");
+            System.out.print("Creating huffman weight table... ");
             for (byte theByte: nonEncodedBytes) {
                 boolean didIncrease = false;
                 for (Node element : weightPairs) {
@@ -81,7 +81,7 @@ public class Huffman {
             }
             System.out.println("Completed");
             head = weightPairs.poll();
-            System.out.print("Traversing huffman tree and creating huffman map... ");
+            System.out.print("Traversing huffman tree... ");
             traverse(head, "", huffmanMap);
             System.out.println("Completed");
 
@@ -93,7 +93,7 @@ public class Huffman {
             System.out.println("Completed");
             ArrayList<Byte> arrayListBytes = new ArrayList<Byte>();
             ArrayList<Byte> overhead = new ArrayList<Byte>();
-            System.out.print("Creating and adding overhead... ");
+            System.out.print("Generating overhead... ");
             initOverhead(overhead, huffmanMap);
 
             //Adding the overhead
@@ -112,7 +112,7 @@ public class Huffman {
                 arrayListBytes.add(element);
             }
             System.out.println("Completed");
-            System.out.print("Adding the new encoded bit stream... ");
+            System.out.print("Adding new encoded bit stream... ");
             convert(encodedStream, arrayListBytes);
             System.out.println("Completed");
             toReturn = new File("Encoded.txt");
@@ -156,6 +156,7 @@ public class Huffman {
         byte[] bytes = null;
 
         try {
+            System.out.print("Analyzing bytes... ");
             bytes = Files.readAllBytes(encoded.toPath());
             StringBuilder bitString = new StringBuilder();
             for (byte element: bytes) {
@@ -173,8 +174,10 @@ public class Huffman {
             for (Map.Entry<Byte, String> element: huffmanMap.entrySet()) {
                 reverseHuffmanMap.put(element.getValue(), element.getKey());
             }
+            System.out.println("Completed");
             int bitLoc = (8 * 8) + (size * 8);
             String tempString = "";
+            System.out.print("Decoding Bytes... ");
             ArrayList<Byte> decodedBytes = new ArrayList<Byte>();
             for (int i = bitLoc; i < streamSize + bitLoc; i++) {
                 if (reverseHuffmanMap.containsKey(tempString)) {
@@ -189,10 +192,13 @@ public class Huffman {
             for (int i = 0; i < decodedArray.length; i++) {
                 decodedArray[i] = decodedBytes.get(i);
             }
+            System.out.println("Completed");
+            System.out.print("Writing to file... ");
             FileOutputStream out = new FileOutputStream(decoded);
             out.write(decodedArray);
             out.flush();
             out.close();
+            System.out.println("Completed");
 
         } catch (Exception e) {
             System.out.println("Fuck 3.0");
