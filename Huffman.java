@@ -23,7 +23,7 @@ public class Huffman {
      */
     public static void main(String[] args) {
 
-        decode(encode(new File("audio.txt")));
+        decode(encode(new File("audio.mp3")));
     }
 
 
@@ -55,6 +55,7 @@ public class Huffman {
         try {
             nonEncodedBytes = Files.readAllBytes(toEncode.toPath());
             //----------------------------Use this ^ to rework it --------------------------
+            System.out.print("Creating the huffman weight table... ");
             for (byte theByte: nonEncodedBytes) {
                 boolean didIncrease = false;
                 for (Node element : weightPairs) {
@@ -70,31 +71,29 @@ public class Huffman {
                 }
             }
            //---------------------------------------------------------------------------------
-
+            System.out.println("Completed");
+            System.out.print("Creating huffman tree... ");
             while (weightPairs.size() > 1) {
                 Node first = weightPairs.poll();
                 Node second = weightPairs.poll();
                 Node combined = new Node(first.getWeight() + second.getWeight(), (byte) '\0', first, second);
                 weightPairs.add(combined);
             }
+            System.out.println("Completed");
             head = weightPairs.poll();
+            System.out.print("Traversing huffman tree and creating huffman map... ");
             traverse(head, "", huffmanMap);
+            System.out.println("Completed");
 
-
-            int k = 0;
-            int g = 0;
-            int length = nonEncodedBytes.length;
-            String encodedStream = "";
+            System.out.print("Encoding new bit stream... ");
+            StringBuilder encodedStream = new StringBuilder();
             for (byte element: nonEncodedBytes) {
-                encodedStream += huffmanMap.get(element);
-                k++;
-                if (k % (length / 100) == 0) {
-                    g++;
-                    System.out.println(g + "%");
-                }
+                encodedStream.append(huffmanMap.get(element));
             }
+            System.out.println("Completed");
             ArrayList<Byte> arrayListBytes = new ArrayList<Byte>();
             ArrayList<Byte> overhead = new ArrayList<Byte>();
+            System.out.print("Creating and adding overhead... ");
             initOverhead(overhead, huffmanMap);
 
             //Adding the overhead
@@ -107,26 +106,28 @@ public class Huffman {
                 arrayListBytes.add(element);
             }
             while (encodedStream.length() % 8 != 0) {
-                encodedStream += "0";
+                encodedStream.append("0");
             }
             for (byte element: overhead) {
                 arrayListBytes.add(element);
             }
-            //Adding the endoded bytes
-            for (byte element: new BigInteger(encodedStream, 2).toByteArray()) {
-                arrayListBytes.add(element);
-            }
+            System.out.println("Completed");
+            System.out.print("Adding the new encoded bit stream... ");
+            convert(encodedStream, arrayListBytes);
+            System.out.println("Completed");
             toReturn = new File("Encoded.txt");
             byte[] bytes = new byte[arrayListBytes.size()];
             for (int i = 0; i < bytes.length; i++) {
                 bytes[i] = arrayListBytes.get(i);
             }
 
+            System.out.print("Writing to the file... ");
             //writing to the file
             FileOutputStream out = new FileOutputStream(toReturn);
             out.write(bytes);
             out.flush();
             out.close();
+            System.out.println("Completed");
 
         } catch (Exception e) {
             System.out.println("Fuck 2.0");
@@ -156,9 +157,9 @@ public class Huffman {
 
         try {
             bytes = Files.readAllBytes(encoded.toPath());
-            String bitString = "";
+            StringBuilder bitString = new StringBuilder();
             for (byte element: bytes) {
-                bitString += String.format("%8s", Integer.toBinaryString(element & 0xFF)).replace(' ', '0');
+                bitString.append(String.format("%8s", Integer.toBinaryString(element & 0xFF)).replace(' ', '0'));
             }
 
             int size = ByteBuffer.wrap(bytes).getInt(0);
@@ -273,6 +274,25 @@ public class Huffman {
         }
     }
 
+
+    /**
+     * Converts the binary string to a byte array
+     * @param binaryString the string of bits to be converted
+     * @param bytes the arrayList that the bytes are to be added to
+     */
+    private static void convert(StringBuilder binaryString, ArrayList<Byte> bytes) {
+        // assumes binaryString.length() is a multiple of 8
+        byte data = 0;
+        for (int i = 0; i < binaryString.length() / 8; i++) {
+            int minIndex = i * 8;
+            int maxIndex = (i + 1) * 8;
+            for (int j = minIndex; j < maxIndex; j++) {
+                data <<= 1;
+                data |= binaryString.charAt(j) - '0';
+            }
+            bytes.add(data);
+        }
+    }
 
     /**
      * Traverses the huffman tree and maps each char to a bit value
