@@ -22,10 +22,8 @@ public class Huffman {
      * @param args the arguments that are useless cause they aren't used
      */
     public static void main(String[] args) {
-
-        //decode(encode(new File("TestFiles/large.xml")));
-        int times = 3;
-        File encoded = encode(new File("TestFiles/small.txt"));
+        int times = 1;
+        File encoded = encode(new File(args[0]));
         for (int i = 0; i < times - 1; i++) {
             encoded = encode(encoded);
         }
