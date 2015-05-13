@@ -56,13 +56,6 @@ public class Runline extends Encoder {
             flags = new byte[(nonEncodedBytes.length / 255) + overflowBytes];
             genFlags(flags, nonEncodedBytes);
 
-
-            System.out.println("\n");
-            for (byte flag: flags) {
-                System.out.println(String.format("%8s", Integer.toBinaryString(flag & 0xFF)).replace(' ', '0'));
-            }
-
-
             byte[] size = ByteBuffer.allocate(4).putInt(flags.length).array();
             for (byte element: size) {
                 encodedBitStream.add(element);
@@ -71,12 +64,11 @@ public class Runline extends Encoder {
             System.out.println(flags.length + " Flags Completed");
             System.out.print("Encoding Bytes: ");
 
-            System.out.println("\n");
+
             for (int i = 0; i < flags.length; i++) {
                 encodedBitStream.add(flags[i]);
                 byte saveByte = nonEncodedBytes[i * 255];
                 int numBytes = 1;
-                System.out.println(encodedBitStream.size() - 1);
                 for (int j = 1; j <= 255
                         && j + (i * 255) < nonEncodedBytes.length; j++) {
                     if (saveByte == nonEncodedBytes[j + (i * 255)] && numBytes < 255) {
@@ -147,9 +139,7 @@ public class Runline extends Encoder {
             byte flag = bytes[4];
             int loc = 5;
             System.out.print("Decoding Stream: ");
-            System.out.println("\n");
             for (int i = 0; i < numChunks; i++) {
-                System.out.println(String.format("%8s", Integer.toBinaryString(flag & 0xFF)).replace(' ', '0'));
                 for (int j = 0; j < 255 && loc < bytes.length; j++) {
                     if (bytes[loc] == flag) {
                         byte numBytes = bytes[loc + 1];
@@ -174,7 +164,6 @@ public class Runline extends Encoder {
                 }
 
                 if (loc < bytes.length) {
-                    System.out.println(loc);
                     flag = bytes[loc];
                     loc++;
                 }
@@ -263,7 +252,6 @@ public class Runline extends Encoder {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println();
         }
     }
 
