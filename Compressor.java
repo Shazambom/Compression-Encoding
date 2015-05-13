@@ -11,7 +11,7 @@ public class Compressor {
     public static void main(String[] args) {
         int times = 1;
 //        File encoded = encode(new File(args[0]));
-        File encoded = Huffman.encode(new File("TestFiles/verySmall.txt"));
+        File encoded = Huffman.encode(new File("TestFiles/big.txt"));
 
         for (int i = 0; i < times - 1; i++) {
             encoded = Huffman.encode(encoded);
@@ -20,11 +20,12 @@ public class Compressor {
             encoded = Runline.encode((encoded));
         }
         for (int i = 0; i < times; i++) {
-            encoded = Huffman.decode(encoded);
-        }
-        for (int i = 0; i < times; i++) {
             encoded = Runline.decode(encoded);
         }
+        for (int i = 0; i < times; i++) {
+            encoded = Huffman.decode(encoded);
+        }
+
 
     }
 }
