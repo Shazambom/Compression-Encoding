@@ -16,7 +16,7 @@ public class Runline extends Encoder {
     public static void main(String[] args) {
         int times = 1;
 //        File encoded = encode(new File(args[0]));
-        File encoded = encode(new File("TestFiles/verySmall.txt"));
+        File encoded = encode(new File("TestFiles/gon.png"));
 
         for (int i = 0; i < times - 1; i++) {
             encoded = encode(encoded);
@@ -56,6 +56,11 @@ public class Runline extends Encoder {
             flags = new byte[(nonEncodedBytes.length / 255) + overflowBytes];
             genFlags(flags, nonEncodedBytes);
 
+            System.out.println("\n");
+            for (byte flag: flags) {
+                System.out.println(String.format("%8s", Integer.toBinaryString(flag & 0xFF)).replace(' ', '0'));
+            }
+
             byte[] size = ByteBuffer.allocate(4).putInt(flags.length).array();
             for (byte element: size) {
                 encodedBitStream.add(element);
@@ -69,6 +74,7 @@ public class Runline extends Encoder {
                 encodedBitStream.add(flags[i]);
                 byte saveByte = nonEncodedBytes[i * 255];
                 int numBytes = 1;
+                System.out.println(encodedBitStream.size() - 1);
                 for (int j = 1; j <= 255
                         && j + (i * 255) < nonEncodedBytes.length; j++) {
                     if (saveByte == nonEncodedBytes[j + (i * 255)] && numBytes < 255) {
@@ -139,9 +145,11 @@ public class Runline extends Encoder {
             byte flag = bytes[4];
             int loc = 5;
             System.out.print("Decoding Stream: ");
+            System.out.println("\n");
             for (int i = 0; i < numChunks; i++) {
+                System.out.println(String.format("%8s", Integer.toBinaryString(flag & 0xFF)).replace(' ', '0'));
                 for (int j = 0; j < 255 && loc < bytes.length; j++) {
-                    if (bytes[loc] == flag) {
+                    if (bytes[loc] == flag && loc + 3 < bytes.length) {
                         byte numBytes = bytes[loc + 1];
                         byte data = bytes[loc + 2];
                         int num = 0;
@@ -164,6 +172,7 @@ public class Runline extends Encoder {
                 }
 
                 if (loc < bytes.length) {
+                    System.out.println(loc);
                     flag = bytes[loc];
                     loc++;
                 }

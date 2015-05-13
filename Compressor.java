@@ -10,20 +10,20 @@ public class Compressor {
      */
     public static void main(String[] args) {
         int times = 1;
-//        File encoded = encode(new File(args[0]));
-        File encoded = Huffman.encode(new File("TestFiles/big.txt"));
+//        File toCompress = new File(args[0]);
+        File toCompress = new File("TestFiles/big.txt");
 
-        for (int i = 0; i < times - 1; i++) {
-            encoded = Huffman.encode(encoded);
+        for (int i = 0; i < times; i++) {
+            toCompress = Huffman.encode(toCompress);
         }
         for (int i = 0; i < times; i++) {
-            encoded = Runline.encode((encoded));
+            toCompress = Runline.encode((toCompress));
         }
         for (int i = 0; i < times; i++) {
-            encoded = Runline.decode(encoded);
+            toCompress = Runline.decode(toCompress);
         }
         for (int i = 0; i < times; i++) {
-            encoded = Huffman.decode(encoded);
+            toCompress = Huffman.decode(toCompress);
         }
 
 
