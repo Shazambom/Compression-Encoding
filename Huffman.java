@@ -16,14 +16,16 @@ import java.nio.file.Files;
 import java.math.BigInteger;
 
 
-public class Huffman {
+public class Huffman extends Encoder{
     /**
      * Is the Main method used for testing
      * @param args the arguments that are useless cause they aren't used
      */
     public static void main(String[] args) {
         int times = 1;
-        File encoded = encode(new File(args[0]));
+//        File encoded = encode(new File(args[0]));
+        File encoded = encode(new File("TestFiles/verySmall.txt"));
+
         for (int i = 0; i < times - 1; i++) {
             encoded = encode(encoded);
         }
@@ -107,10 +109,6 @@ public class Huffman {
             for (byte element: size) {
                 arrayListBytes.add(element);
             }
-            byte[] streamSize = ByteBuffer.allocate(4).putInt(encodedStream.length()).array();
-            for (byte element: streamSize) {
-                arrayListBytes.add(element);
-            }
             while (encodedStream.length() % 8 != 0) {
                 encodedStream.append("0");
             }
@@ -172,7 +170,6 @@ public class Huffman {
             }
 
             int size = ByteBuffer.wrap(bytes).getInt(0);
-            int streamSize = ByteBuffer.wrap(bytes).getInt(4);
 
 
             HashMap<Byte, String> huffmanMap = new HashMap<Byte, String>();
@@ -183,7 +180,7 @@ public class Huffman {
                 reverseHuffmanMap.put(element.getValue(), element.getKey());
             }
             System.out.println("Completed");
-            int bitLoc = (8 * 8) + (size * 8);
+            int bitLoc = (4 * 8) + (size * 8);
 
 
             String tempString = "";
@@ -260,7 +257,7 @@ public class Huffman {
         boolean length = false;
         byte keyVal = 0;
         byte lengthVal = 0;
-        for (int i = 8; i < size + 8; i++) {
+        for (int i = 4; i < size + 4; i++) {
             if (key) {
                 keyVal = bytes[i];
                 key = false;
@@ -358,115 +355,5 @@ public class Huffman {
         ret[0] = (byte) ((a >> 24) & 0xFF);
         return ret;
     }
-
-    private static class Node implements
-            Comparable<Node>{
-        private int weight;
-        private byte value;
-        private Node left;
-        private Node right;
-
-
-        /**
-         * Initializes the object
-         * @param weight the weight of the char
-         * @param value the value of the char
-         */
-        public Node(int weight, byte value) {
-            this.weight = weight;
-            this.value = value;
-            left = null;
-            right = null;
-        }
-
-        /**
-         * Initializes the object
-         * @param weight the weight of the char
-         * @param value the value of the char
-         * @param left the left child of the node
-         * @param right the right child of the node
-         */
-        public Node(int weight, byte value, Node left, Node right) {
-            this.weight = weight;
-            this.value = value;
-            this.left = left;
-            this.right = right;
-        }
-
-
-        /**
-         * Gets the left child node
-         * @return the left variable
-         */
-        public Node getLeft() {
-            return left;
-        }
-
-        /**
-         * Sets the left child
-         * @param left the node to be set to left
-         */
-        public void setLeft(Node left) {
-            this.left = left;
-        }
-
-        /**
-         * Gets the right child node
-         * @return the right variable
-         */
-        public Node getRight() {
-            return right;
-        }
-
-        /**
-         * Sets the right child
-         * @param right the node to be set to right
-         */
-        public void setRight(Node right) {
-            this.right = right;
-        }
-
-        /**
-         * Gets the weight
-         * @return the weight of the char
-         */
-        public int getWeight() {
-            return weight;
-        }
-
-        /**
-         * Sets the weight variable
-         * @param weight the new value of weight
-         */
-        public void setWeight(int weight) {
-            this.weight = weight;
-        }
-        /**
-         * Gets the value
-         * @return the value of the char
-         */
-        public byte getValue() {
-            return value;
-        }
-
-        /**
-         * Increases the weight of the Node
-         */
-        public void increaseWeight() {
-            weight++;
-        }
-
-        @Override
-        public int compareTo(Node other) {
-            if (weight < other.getWeight()) {
-                return -1;
-            } else if (weight > other.getWeight()) {
-                return 1;
-            } else {
-                return ((int) value) - ((int) other.getValue());
-            }
-        }
-    }
-
 
 }
