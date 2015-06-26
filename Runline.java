@@ -12,9 +12,9 @@ public class Runline extends Encoder {
     private static final byte FLAG = BYTEDECK.get(0);
 
     public static void main(String[] args) {
-        int times = 5;
+        int times = 1;
 //        File encoded = encode(new File(args[0]));
-        File encoded = encode(new File("TestFiles/0s.txt"));
+        File encoded = encode(new File("TestFiles/loremIpsum.txt"));
 
         for (int i = 0; i < times - 1; i++) {
             encoded = encode(encoded);
@@ -38,7 +38,6 @@ public class Runline extends Encoder {
         if (toEncode == null) {
             throw new IllegalArgumentException("File was null");
         }
-        byte[] flags = null;
         byte[] nonEncodedBytes = null;
         ArrayList<Byte> encodedBitStream = null;
         File toReturn = null;

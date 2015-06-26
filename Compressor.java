@@ -10,7 +10,7 @@ public class Compressor {
      */
     public static void main(String[] args) {
         int hTimes = 1;
-        int rlTimes = 0;
+        int rlTimes = 1;
         int lzTimes = 0;
 //        File toCompress = new File(args[0]);
         File toCompress = new File("TestFiles/big.txt");

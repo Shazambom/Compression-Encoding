@@ -24,7 +24,7 @@ public class Huffman extends Encoder{
     public static void main(String[] args) {
         int times = 1;
 //        File encoded = encode(new File(args[0]));
-        File encoded = encode(new File("TestFiles/big.txt"));
+        File encoded = encode(new File("TestFiles/FitnessProject.txt"));
 
         for (int i = 0; i < times - 1; i++) {
             encoded = encode(encoded);
